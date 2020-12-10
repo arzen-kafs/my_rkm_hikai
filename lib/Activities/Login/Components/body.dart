@@ -9,12 +9,12 @@ import 'package:my_rkm_hikai/Global/rounded_button.dart';
 import 'package:my_rkm_hikai/Global/rounded_input_field.dart';
 import 'package:my_rkm_hikai/Global/rounded_password_field.dart';
 import 'package:my_rkm_hikai/core/session.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 import 'background.dart';
 
 class Body extends StatefulWidget {
-
-  const Body({
+  Body({
     Key key,
   }) : super(key: key);
 
@@ -23,8 +23,11 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  bool pasword_visible=true;
-  Session session=Session();
+
+  final _formKey = GlobalKey<FormState>();
+  // ignore: non_constant_identifier_names
+  bool pasword_visible = true;
+  Session session = Session();
 
   @override
   Widget build(BuildContext context) {
@@ -78,48 +81,72 @@ class _BodyState extends State<Body> {
               height: size.height * 0.35,
             ),
             SizedBox(height: size.height * 0.03),
-            RoundedInputField(
-              controller: (emailController),
-              hintText: "Roll No",
-              icon: Icons.folder_shared_outlined,
-              onChanged: (value) {},
-            ),
-            RoundedPasswordField(
-              password_visible: true,
-              controller: (passwordController),
-              hintText: "Password",
-              onChanged: (value) {},
-            ),
-            RoundedButton(
-              color: Color(0xff0062cc),
-              text: "Sign in",
-              textColor: Colors.white,
-              press: ()  async {
+            Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  RoundedInputField(
+                    formFieldValidator: (value) {
+                      if (value.isEmpty) {
+                        return "Please enter a value";
+                      }
+                      return null;
+                    },
+                    controller: (emailController),
+                    hintText: "Roll No",
+                    icon: Icons.folder_shared_outlined,
+                    onChanged: (value) {},
+                  ),
+                  RoundedPasswordField(
+                    formFieldValidator: (value) {
+                      Pattern pattern =
+                          r'^[0-9]{10,}$';
+                      RegExp regex = new RegExp(pattern);
+                      print(value);
+                      if (value.isEmpty || !regex.hasMatch(value)) {
+                        return "password should be 10 characters";
+                      }
+                      return null;
+                    },
+                    password_visible: true,
+                    controller: (passwordController),
+                    hintText: "Password",
+                    onChanged: (value) {},
+                  ),
+                  RoundedButton(
+                    color: Color(0xff0062cc),
+                    text: "Sign in",
+                    textColor: Colors.white,
+                    press: () async {
+                      if (_formKey.currentState.validate()) {
+                        print("Click");
+                        var userExists = await signIn(
+                            emailController.text, passwordController.text);
+                        if (userExists == true) {
 
-                print("Click");
-                var userExists =
-                    await signIn(emailController.text, passwordController.text);
-                if (userExists == true) {
-
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return NavDrawer();
-                      },
-                    ),
-                  );
-                } else {
-                  Fluttertoast.showToast(
-                      msg: "Roll No and Password not found",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.TOP,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.black38,
-                      textColor: Colors.white,
-                      fontSize: 12.0);
-                }
-              },
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return NavDrawer();
+                              },
+                            ),
+                          );
+                        }
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Roll No and Password not found",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.black38,
+                            textColor: Colors.white,
+                            fontSize: 12.0);
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -139,6 +166,7 @@ final TextEditingController passwordController = new TextEditingController();
 
 //Code for signing the user in
 Future<bool> signIn(String email, pass) async {
+  ProgressDialog pr;
   Session session = Session();
   //Left hand side of the map should be the same as the fields in the server
   print("==============INSIDE SIGN================");
@@ -151,6 +179,7 @@ Future<bool> signIn(String email, pass) async {
       await http.post(serverUrl + "/Authentication/identify", body: data);
   print("========RESPONSE==========");
   print(response.toString());
+  pr.show();
   if (response.statusCode == 200) {
     jsonResponse = json.decode(response.body);
     print("======JSON============");
@@ -176,5 +205,4 @@ Future<bool> signIn(String email, pass) async {
   } else {
     return false;
   }
-
 }

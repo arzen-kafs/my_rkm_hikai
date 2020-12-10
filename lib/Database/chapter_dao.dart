@@ -11,7 +11,7 @@ class ChapterDao {
   //Adds new Todo records
   Future<int> createChapter(Chapter chapter) async {
     final db = await dbProvider.database;
-    var result = db.insert(chapterTABLE, chapter.toMap());
+    var result = db.insert(tblview, chapter.toMap());
     return result;
   }
 
@@ -23,12 +23,12 @@ class ChapterDao {
     List<Map<String, dynamic>> result;
     if (query != null) {
       if (query.isNotEmpty)
-        result = await db.query(chapterTABLE,
+        result = await db.query(tblview,
             columns: columns,
             where: 'description LIKE ?',
             whereArgs: ["%$query%"]);
     } else {
-      result = await db.query(chapterTABLE, columns: columns);
+      result = await db.query(tblview, columns: columns);
     }
 
     List<Chapter> chapters = result.isNotEmpty
@@ -41,7 +41,7 @@ class ChapterDao {
   Future<int> updateChapter(Chapter chapter) async {
     final db = await dbProvider.database;
 
-    var result = await db.update(chapterTABLE, chapter.toMap(),
+    var result = await db.update(tblview, chapter.toMap(),
         where: "chapterNo = ?", whereArgs: [chapter.chapterNo]);
 
     return result;
@@ -51,7 +51,7 @@ class ChapterDao {
   Future<int> deleteChapter(String chapterNo) async {
     final db = await dbProvider.database;
     var result = await db
-        .delete(chapterTABLE, where: 'chapterNo = ?', whereArgs: [chapterNo]);
+        .delete(tblview, where: 'chapterNo = ?', whereArgs: [chapterNo]);
 
     return result;
   }
@@ -60,7 +60,7 @@ class ChapterDao {
   Future deleteAllChapters() async {
     final db = await dbProvider.database;
     var result = await db.delete(
-      chapterTABLE,
+      tblview,
     );
 
     return result;

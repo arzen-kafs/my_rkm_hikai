@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:my_rkm_hikai/Global/rounded_input_field.dart';
 import 'package:my_rkm_hikai/core/session.dart';
 import 'package:my_rkm_hikai/Activities/Login/Components/body.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
+
 class _LoginScreenState extends State<LoginScreen> {
   Session session = Session();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Body(),
+      body: Body(),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
           _networkSelectionBottomSheet(context);
@@ -20,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   void _networkSelectionBottomSheet(context) {
     showModalBottomSheet(
         context: context,
@@ -59,14 +62,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: Text('Local Server'),
                   onTap: () {
                     _showMyDialog();
-
                   },
                 ),
               ],
             ),
           );
         });
- }
+  }
 
   void _showMyDialog() async {
     final TextEditingController serverController = new TextEditingController();
@@ -79,13 +81,21 @@ class _LoginScreenState extends State<LoginScreen> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+
                 RoundedInputField(
+                  formFieldValidator: (value) {
+                    if (value.isEmpty) {
+                      return "Field should not be empty";
+                    }
+                    return null;
+                  },
                   hintText: "https://192.168.75.120",
                   icon: Icons.miscellaneous_services_sharp,
-                  controller:(serverController),
+                  controller: (serverController),
                   onChanged: (value) {},
                 )
-               //Text('Would you like to approve of this message?'),
+
+                //Text('Would you like to approve of this message?'),
               ],
             ),
           ),

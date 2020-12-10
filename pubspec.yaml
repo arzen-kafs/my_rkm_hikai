@@ -38,6 +38,7 @@ dependencies:
   url_launcher: any
   calendarro: ^1.2.0
   flutter_svg: ^0.19.1
+  progress_dialog: ^1.2.0
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -4,13 +4,17 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-final chapterTABLE = 'chapter';
+final tblview = 'chapter';
 final lectureTABLE = 'lecture';
+final viewTABLE='tblview';
 
 class DatabaseProvider {
   static final DatabaseProvider dbProvider = DatabaseProvider();
   Database _database;
-  Future<Database> get database async {
+  Future<Database> get
+
+
+  database async {
     if (_database != null) return _database;
     _database = await createDatabase();
     return _database;
@@ -31,7 +35,7 @@ class DatabaseProvider {
   }
 
   void initDB(Database database, int version) async {
-    await database.execute("CREATE TABLE $chapterTABLE ("
+    await database.execute("CREATE TABLE $tblview ("
         "chapterNo VARCHAR(255) PRIMARY KEY, "
         "title TEXT, "
         "ebook TEXT, "
@@ -47,5 +51,12 @@ class DatabaseProvider {
         "description TEXT, "
         "chapterNo VARCHAR(255) "
         ")");
+    await database.execute("CREATE TABLE $viewTABLE ("
+        "id INTEGER PRIMARY KEY, "
+        "lectureId TEXT, "
+        "numberView INTEGER, "
+        "viewDate INTEGER "
+        ")"
+    );
   }
 }

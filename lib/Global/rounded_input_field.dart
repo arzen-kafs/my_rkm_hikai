@@ -6,10 +6,12 @@ import 'package:my_rkm_hikai/Resources/colors.dart';
 class RoundedInputField extends StatelessWidget {
   final String hintText;
   final IconData icon;
+  final FormFieldValidator formFieldValidator;
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   const RoundedInputField({
     Key key,
+    this.formFieldValidator,
     this.hintText,
     this.icon = Icons.person,
     this.onChanged,
@@ -19,7 +21,7 @@ class RoundedInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFieldContainer(
-      child: TextField(
+      child: TextFormField(
         controller:controller,
         onChanged: onChanged,
         cursorColor: PrimaryColor,
@@ -31,6 +33,7 @@ class RoundedInputField extends StatelessWidget {
           hintText: hintText,
           border: InputBorder.none,
         ),
+        validator:formFieldValidator
       ),
     );
   }

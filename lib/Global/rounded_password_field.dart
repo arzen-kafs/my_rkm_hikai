@@ -6,11 +6,12 @@ import 'package:my_rkm_hikai/Resources/colors.dart';
 class RoundedPasswordField extends StatefulWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
-
+  final FormFieldValidator formFieldValidator;
   final TextEditingController controller;
   bool password_visible =false;
    RoundedPasswordField({
     Key key,
+     this.formFieldValidator,
     this.password_visible,
     this.hintText,
     this.onChanged,
@@ -25,11 +26,11 @@ class _RoundedPasswordFieldState extends State<RoundedPasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextFieldContainer(
-      child: TextField(
+      child: TextFormField(
         obscureText: widget.password_visible,//This will obscure text dynamically
         controller: widget.controller,
         onChanged: widget.onChanged,
-
+        validator: widget.formFieldValidator,
         cursorColor: PrimaryColor,
         decoration: InputDecoration(
           hintText: widget.hintText,
